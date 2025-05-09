@@ -254,7 +254,7 @@ VOID CleanupImeMenus(VOID)
     g_nNextMenuID = 0;
 }
 
-INT RemapImeMenuID(IN const IMEMENUNODE *pMenu, INT nID)
+INT GetRealImeMenuID(IN const IMEMENUNODE *pMenu, INT nID)
 {
     if (!pMenu || !pMenu->m_nItems || nID < ID_STARTIMEMENU)
         return 0;
@@ -267,7 +267,7 @@ INT RemapImeMenuID(IN const IMEMENUNODE *pMenu, INT nID)
 
         if (pItem->m_pSubMenu)
         {
-            INT nRealID = RemapImeMenuID(pItem->m_pSubMenu, nID);
+            INT nRealID = GetRealImeMenuID(pItem->m_pSubMenu, nID);
             if (nRealID)
                 return nRealID;
         }

@@ -19,6 +19,6 @@ typedef struct tagIMEMENUNODE
 } IMEMENUNODE, *PIMEMENUNODE;
 
 PIMEMENUNODE CreateImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu OPTIONAL, IN BOOL bRightMenu);
-INT RemapImeMenuID(IN const IMEMENUNODE *pMenu, INT nID);
+INT GetRealImeMenuID(IN const IMEMENUNODE *pMenu, INT nID);
 HMENU MenuFromImeMenu(IN const IMEMENUNODE *pMenu);
 VOID CleanupImeMenus(VOID);
