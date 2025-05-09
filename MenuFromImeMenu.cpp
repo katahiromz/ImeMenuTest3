@@ -52,14 +52,13 @@ static void Free(void *ptr)
 }
 
 PIMEMENUNODE g_pMenuList = NULL;
-UINT g_nNextMenuItemID = 0;
 
 VOID FillImeMenuItem(OUT LPMENUITEMINFO pItemInfo, IN const IMEMENUITEM *pItem)
 {
     ZeroMemory(pItemInfo, sizeof(MENUITEMINFO));
     pItemInfo->cbSize = sizeof(MENUITEMINFO);
     pItemInfo->fMask = MIIM_ID | MIIM_STATE | MIIM_DATA;
-    pItemInfo->wID = pItem->m_nItemID;
+    pItemInfo->wID = pItem->m_Info.wID;
     pItemInfo->fState = pItem->m_Info.fState;
     pItemInfo->dwItemData = pItem->m_Info.dwItemData;
 
@@ -68,7 +67,7 @@ VOID FillImeMenuItem(OUT LPMENUITEMINFO pItemInfo, IN const IMEMENUITEM *pItem)
         pItemInfo->fMask |= MIIM_FTYPE;
         pItemInfo->fType = 0;
         if (pItem->m_Info.fType & IMFT_RADIOCHECK)
-            pItemInfo->fType = MFT_RADIOCHECK;
+            pItemInfo->fType |= MFT_RADIOCHECK;
         if (pItem->m_Info.fType & IMFT_SEPARATOR)
             pItemInfo->fType |= MFT_SEPARATOR;
     }
@@ -140,17 +139,13 @@ PIMEMENUNODE AllocateImeMenu(DWORD itemCount)
     return pMenu;
 }
 
-UINT GetImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu, IN BOOL bRightMenu, OUT PIMEMENUITEM pItem)
+void GetImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu, IN BOOL bRightMenu, OUT PIMEMENUITEM pItem)
 {
     ZeroMemory(pItem, sizeof(IMEMENUITEM));
     pItem->m_Info = *lpImeParentMenu;
 
     if (lpImeParentMenu->fType & IMFT_SUBMENU)
         pItem->m_pSubMenu = CreateImeMenu(hWnd, hIMC, lpImeParentMenu, bRightMenu);
-
-    UINT nID = ID_STARTIMEMENU + g_nNextMenuItemID++;
-    pItem->m_nItemID = nID;
-    return nID;
 }
 
 #ifdef USE_CUSTOM

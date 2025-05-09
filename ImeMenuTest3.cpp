@@ -28,22 +28,20 @@ void ShowImeMenu(HWND hWnd, HIMC hIMC, BOOL bRight)
 {
     PIMEMENUNODE pMenu = CreateImeMenu(hWnd, hIMC, NULL, bRight);
     HMENU hMenu = MenuFromImeMenu(pMenu);
-
     if (hMenu)
     {
-        DWORD dwItemData;
         DWORD dwPos = (DWORD)GetMessagePos();
-        int nCmd;
-
-        nCmd = TrackPopupMenuEx(hMenu,
-                                TPM_RETURNCMD | TPM_NONOTIFY |
-                                TPM_LEFTBUTTON | TPM_LEFTALIGN | TPM_TOPALIGN,
-                                LOWORD(dwPos), HIWORD(dwPos),
-                                hWnd, NULL);
-
+        INT nCmd = TrackPopupMenuEx(hMenu,
+                                    TPM_RETURNCMD | TPM_NONOTIFY |
+                                    TPM_LEFTBUTTON | TPM_LEFTALIGN | TPM_TOPALIGN,
+                                    LOWORD(dwPos), HIWORD(dwPos),
+                                    hWnd, NULL);
         if (nCmd)
         {
-            ImmNotifyIME(hIMC, NI_IMEMENUSELECTED, nCmd, 0);
+            MENUITEMINFO mii = { sizeof(mii), MIIM_DATA };
+            GetMenuItemInfo(hMenu, nCmd, FALSE, &mii);
+
+            ImmNotifyIME(hIMC, NI_IMEMENUSELECTED, nCmd, mii.dwItemData);
         }
     }
     else

@@ -25,7 +25,6 @@ CAPTION "ImeMenuTest3"
 STYLE DS_CENTER | DS_MODALFRAME | WS_POPUPWINDOW | WS_CAPTION
 FONT 9, "MS Shell Dlg"
 {
-    PUSHBUTTON "OK", IDOK, 75, 99, 60, 14
 }
 
 //////////////////////////////////////////////////////////////////////////////

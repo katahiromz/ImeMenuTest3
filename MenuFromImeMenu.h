@@ -5,7 +5,6 @@ struct tagIMEMENUNODE;
 typedef struct tagIMEMENUITEM
 {
     IMEMENUITEMINFO m_Info;
-    UINT m_nItemID;
     struct tagIMEMENUNODE *m_pSubMenu;
 } IMEMENUITEM, *PIMEMENUITEM;
 
