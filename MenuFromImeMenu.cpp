@@ -52,6 +52,7 @@ static void Free(void *ptr)
 }
 
 PIMEMENUNODE g_pMenuList = NULL;
+INT g_nNextMenuID = 0;
 
 VOID FillImeMenuItem(OUT LPMENUITEMINFO pItemInfo, IN const IMEMENUITEM *pItem)
 {
@@ -139,13 +140,16 @@ PIMEMENUNODE AllocateImeMenu(DWORD itemCount)
     return pMenu;
 }
 
-void GetImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu, IN BOOL bRightMenu, OUT PIMEMENUITEM pItem)
+void GetImeMenuItem(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu, IN BOOL bRightMenu, OUT PIMEMENUITEM pItem)
 {
     ZeroMemory(pItem, sizeof(IMEMENUITEM));
     pItem->m_Info = *lpImeParentMenu;
 
     if (lpImeParentMenu->fType & IMFT_SUBMENU)
         pItem->m_pSubMenu = CreateImeMenu(hWnd, hIMC, lpImeParentMenu, bRightMenu);
+
+    pItem->m_nRealID = pItem->m_Info.wID;
+    pItem->m_Info.wID = ID_STARTIMEMENU + g_nNextMenuID++;
 }
 
 #ifdef USE_CUSTOM
@@ -194,7 +198,7 @@ CreateImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu O
     PIMEMENUITEM pItems = pMenu->m_Items;
     for (DWORD iItem = 0; iItem < newItemCount; ++iItem)
     {
-        GetImeMenu(hWnd, hIMC, &pImeMenuItems[iItem], bRightMenu, &pItems[iItem]);
+        GetImeMenuItem(hWnd, hIMC, &pImeMenuItems[iItem], bRightMenu, &pItems[iItem]);
     }
 
     Free(pImeMenuItems);
@@ -247,4 +251,27 @@ VOID CleanupImeMenus(VOID)
     }
 
     g_pMenuList = NULL;
+    g_nNextMenuID = 0;
+}
+
+INT RemapImeMenuID(IN const IMEMENUNODE *pMenu, INT nID)
+{
+    if (!pMenu || !pMenu->m_nItems || nID < ID_STARTIMEMENU)
+        return 0;
+
+    for (INT iItem = 0; iItem < pMenu->m_nItems; ++iItem)
+    {
+        const IMEMENUITEM *pItem = &pMenu->m_Items[iItem];
+        if (pItem->m_Info.wID == nID)
+            return pItem->m_nRealID;
+
+        if (pItem->m_pSubMenu)
+        {
+            INT nRealID = RemapImeMenuID(pItem->m_pSubMenu, nID);
+            if (nRealID)
+                return nRealID;
+        }
+    }
+
+    return 0;
 }

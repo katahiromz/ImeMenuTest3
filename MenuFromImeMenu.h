@@ -1,10 +1,13 @@
 #pragma once
 
+#define ID_STARTIMEMENU 1000
+
 struct tagIMEMENUNODE;
 
 typedef struct tagIMEMENUITEM
 {
     IMEMENUITEMINFO m_Info;
+    UINT m_nRealID;
     struct tagIMEMENUNODE *m_pSubMenu;
 } IMEMENUITEM, *PIMEMENUITEM;
 
@@ -16,7 +19,6 @@ typedef struct tagIMEMENUNODE
 } IMEMENUNODE, *PIMEMENUNODE;
 
 PIMEMENUNODE CreateImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpImeParentMenu OPTIONAL, IN BOOL bRightMenu);
+INT RemapImeMenuID(IN const IMEMENUNODE *pMenu, INT nID);
 HMENU MenuFromImeMenu(IN const IMEMENUNODE *pMenu);
 VOID CleanupImeMenus(VOID);
-
-#define ID_STARTIMEMENU 1000

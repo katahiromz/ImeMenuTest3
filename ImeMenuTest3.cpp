@@ -38,10 +38,12 @@ void ShowImeMenu(HWND hWnd, HIMC hIMC, BOOL bRight)
                                     hWnd, NULL);
         if (nCmd)
         {
+            INT nRealID = RemapImeMenuID(pMenu, nCmd);
+
             MENUITEMINFO mii = { sizeof(mii), MIIM_DATA };
             GetMenuItemInfo(hMenu, nCmd, FALSE, &mii);
 
-            ImmNotifyIME(hIMC, NI_IMEMENUSELECTED, nCmd, mii.dwItemData);
+            ImmNotifyIME(hIMC, NI_IMEMENUSELECTED, nRealID, mii.dwItemData);
         }
     }
     else
