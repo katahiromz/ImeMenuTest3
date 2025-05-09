@@ -22,3 +22,12 @@ PIMEMENUNODE CreateImeMenu(IN HWND hWnd, IN HIMC hIMC, OUT PIMEMENUITEMINFO lpIm
 INT GetRealImeMenuID(IN const IMEMENUNODE *pMenu, INT nID);
 HMENU MenuFromImeMenu(IN const IMEMENUNODE *pMenu);
 VOID CleanupImeMenus(VOID);
+
+DWORD
+GetImeMenuItems(
+    IN HIMC hIMC,
+    IN DWORD dwFlags,
+    IN DWORD dwType,
+    OUT PIMEMENUITEMINFO lpImeParentMenu OPTIONAL,
+    OUT PIMEMENUITEMINFO pImeMenuItems OPTIONAL,
+    IN DWORD cbItems);

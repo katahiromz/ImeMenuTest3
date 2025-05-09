@@ -6,7 +6,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <imm.h>
-#include "MenuFromImeMenu.h"
+#include "ImeMenu.h"
 
 BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
 {

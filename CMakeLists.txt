@@ -29,8 +29,8 @@ message(STATUS "USE_UNICODE = ${USE_UNICODE}")
 
 # ImeMenuTest3.exe
 add_executable(ImeMenuTest3 WIN32
+    ImeMenu.cpp
     ImeMenuTest3.cpp
-    MenuFromImeMenu.cpp
     ImeMenuTest3_res.rc)
 target_link_libraries(ImeMenuTest3 gdi32 comctl32 imm32)
 

@@ -4,7 +4,7 @@
 
 #include <windows.h>
 #include <imm.h>
-#include "MenuFromImeMenu.h"
+#include "ImeMenu.h"
 
 #if 0
 /* fType of IMEMENUITEMINFO structure */
