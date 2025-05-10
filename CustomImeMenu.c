@@ -11,13 +11,13 @@
 #define IDM_PROPERTY 110
 #define IDM_ABOUT 111
 
-struct MYMENUITEM
+typedef struct tagMYMENUITEM
 {
     INT nCommandID;
     LPCTSTR pszString;
     BOOL bDisabled;
     BOOL bChecked;
-};
+} MYMENUITEM, *PMYMENUITEM;
 static const MYMENUITEM top_menu_items[] =
 {
     {IDM_HIRAGANA, TEXT("IDM_HIRAGANA"), FALSE},
@@ -54,10 +54,10 @@ DWORD WINAPI ImeGetImeMenuItems(HIMC hIMC, DWORD dwFlags, DWORD dwType,
         DWORD dwConversion = 0, dwSentence = 0;
 
         for (size_t i = 0; i < _countof(top_menu_items); ++i) {
-            const MYMENUITEM& item = top_menu_items[i];
+            const MYMENUITEM *pItem = &top_menu_items[i];
             lpImeMenu[i].cbSize = sizeof(IMEMENUITEMINFO);
             lpImeMenu[i].fState = 0;
-            switch (item.nCommandID) {
+            switch (pItem->nCommandID) {
             case -1:
                 lpImeMenu[i].fType = IMFT_SEPARATOR;
                 break;
@@ -88,19 +88,19 @@ DWORD WINAPI ImeGetImeMenuItems(HIMC hIMC, DWORD dwFlags, DWORD dwType,
                 lpImeMenu[i].fType = 0;
                 break;
             }
-            if (item.bDisabled) {
+            if (pItem->bDisabled) {
                 lpImeMenu[i].fState |= MFS_GRAYED;
             }
-            lpImeMenu[i].wID = item.nCommandID;
+            lpImeMenu[i].wID = pItem->nCommandID;
             lpImeMenu[i].hbmpChecked = NULL;
             lpImeMenu[i].hbmpUnchecked = NULL;
-            if (item.nCommandID == IDM_FULL_ASCII)
+            if (pItem->nCommandID == IDM_FULL_ASCII)
             {
                 lpImeMenu[i].hbmpChecked = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(1));
                 lpImeMenu[i].hbmpUnchecked = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(2));
             }
-            if (item.pszString)
-                lstrcpy(lpImeMenu[i].szString, item.pszString);
+            if (pItem->pszString)
+                lstrcpy(lpImeMenu[i].szString, pItem->pszString);
             else
                 lpImeMenu[i].szString[0] = 0;
             lpImeMenu[i].hbmpItem = NULL;

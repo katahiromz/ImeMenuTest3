@@ -6,6 +6,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <imm.h>
+#include <shlwapi.h>
 #include "ImeMenu.h"
 
 BOOL OnInitDialog(HWND hwnd, HWND hwndFocus, LPARAM lParam)
@@ -60,7 +61,8 @@ void OnLButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
     POINT pt = { x, y };
     ClientToScreen(hwnd, &pt);
 
-    if (HIMC hIMC = ImmGetContext(hwnd))
+    HIMC hIMC = ImmGetContext(hwnd);
+    if (hIMC)
     {
         ShowImeMenu(hwnd, hIMC, FALSE);
         ImmReleaseContext(hwnd, hIMC);
@@ -72,7 +74,8 @@ void OnRButtonDown(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags)
     POINT pt = { x, y };
     ClientToScreen(hwnd, &pt);
 
-    if (HIMC hIMC = ImmGetContext(hwnd))
+    HIMC hIMC = ImmGetContext(hwnd);
+    if (hIMC)
     {
         ShowImeMenu(hwnd, hIMC, TRUE);
         ImmReleaseContext(hwnd, hIMC);
@@ -100,5 +103,22 @@ WinMain(HINSTANCE   hInstance,
 {
     InitCommonControls();
     DialogBox(hInstance, MAKEINTRESOURCE(1), NULL, DialogProc);
+
+#if (WINVER >= 0x0500)
+    HANDLE hProcess = GetCurrentProcess();
+    TCHAR szText[MAX_PATH];
+
+    wnsprintf(szText, _countof(szText), TEXT("Count of GDI objects: %ld\n"), GetGuiResources(hProcess, GR_GDIOBJECTS));
+    OutputDebugString(szText);
+
+    wnsprintf(szText, _countof(szText), TEXT("Count of USER objects: %ld\n"), GetGuiResources(hProcess, GR_USEROBJECTS));
+    OutputDebugString(szText);
+#endif
+
+#if defined(_MSC_VER) && !defined(NDEBUG)
+    // for detecting memory leak (MSVC only)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
     return 0;
 }
