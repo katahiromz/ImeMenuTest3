@@ -499,7 +499,7 @@ GetImeMenuItems(
     Free(pb);
     return ret;
 #else
-    return GetImeMenuItemsBase(hIMC, dwFlags, dwType, lpImeParentMenu, pImeMenuItems, cbItems);
+    return GetImeMenuItemsBase(hIMC, dwFlags, dwType, lpImeParentMenu, pImeMenuItems, dwSize);
 #endif
 }
 
