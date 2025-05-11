@@ -251,34 +251,17 @@ SerializeImeMenu(
     }
 
     SIZE_T cbItems = dwItemCount * sizeof(IMEMENUITEMINFO);
-    PIMEMENUITEMINFO pItems = (PIMEMENUITEMINFO)Alloc(cbItems);
-    if (!pItems)
-        return 0;
-
-    dwItemCount = GetImeMenuItemsBase(hIMC, dwFlags, dwType, lpImeParentMenu, pItems, cbItems);
-    pView->dwItemCount = dwItemCount;
 
     pView->dwItemsOffset = pb - (PBYTE)pView;
     pView->dwBitmapsOffset = pView->dwItemsOffset + cbItems;
     if (pView->dwBitmapsOffset + sizeof(DWORD) > pView->cbCapacity)
-    {
-        for (DWORD iItem = 0; iItem < dwItemCount; ++iItem)
-        {
-            if (pItems[iItem].hbmpChecked)
-                DeleteObject(pItems[iItem].hbmpChecked);
-            if (pItems[iItem].hbmpUnchecked)
-                DeleteObject(pItems[iItem].hbmpUnchecked);
-            if (pItems[iItem].hbmpItem)
-                DeleteObject(pItems[iItem].hbmpItem);
-        }
-        Free(pItems);
         return 0;
-    }
-    CopyMemory(pb, pItems, cbItems);
-    pView->cbSize += cbItems;
 
-    Free(pItems);
-    pItems = PTR_FROM_OFFSET(pView, pView->dwItemsOffset);
+    PIMEMENUITEMINFO pItems = (PIMEMENUITEMINFO)pb;
+
+    dwItemCount = GetImeMenuItemsBase(hIMC, dwFlags, dwType, lpImeParentMenu, pItems, cbItems);
+    pView->dwItemCount = dwItemCount;
+    pView->cbSize += cbItems;
 
     DWORD dwOffset;
     HDC hDC = CreateCompatibleDC(NULL);
