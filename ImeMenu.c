@@ -721,6 +721,7 @@ GetImeMenuItems(
         assert(0);
         return 0;
     }
+    ZeroMemory(lpImeMenuItems, dwSize);
     DWORD ret = Imm32DeserializeImeMenu((PIMEMENUINFO)pb, lpImeMenuItems, dwSize);
     Free(pb);
     return ret;
