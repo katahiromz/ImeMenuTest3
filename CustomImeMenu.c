@@ -100,7 +100,7 @@ DWORD WINAPI ImeGetImeMenuItems(HIMC hIMC, DWORD dwFlags, DWORD dwType,
                 lpImeMenu[i].hbmpUnchecked = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(2));
             }
             if (pItem->pszString)
-                lstrcpy(lpImeMenu[i].szString, pItem->pszString);
+                StringCbCopyW(lpImeMenu[i].szString, sizeof(lpImeMenu[i].szString), pItem->pszString);
             else
                 lpImeMenu[i].szString[0] = 0;
             lpImeMenu[i].hbmpItem = NULL;

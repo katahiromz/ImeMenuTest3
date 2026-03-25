@@ -41,5 +41,9 @@ GetImeMenuItems(
     OUT PIMEMENUITEMINFO pImeMenuItems OPTIONAL,
     IN DWORD cbItems);
 
+DWORD WINAPI ImeGetImeMenuItems(HIMC hIMC, DWORD dwFlags, DWORD dwType,
+                                LPIMEMENUITEMINFO lpImeParentMenu,
+                                LPIMEMENUITEMINFO lpImeMenu, DWORD dwSize);
+
 void *Alloc(size_t size);
 void Free(void *ptr);
