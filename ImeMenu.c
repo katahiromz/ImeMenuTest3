@@ -59,7 +59,7 @@ typedef struct tagIMEMENUINFO
     DWORD_PTR dwParentOffset;  // Relative offset to parent menu data (or pointer)
     DWORD_PTR dwItemsOffset;   // Relative offset to menu items (or pointer)
     DWORD dwCount;             // # of items
-    DWORD_PTR dwSubMenuOffset; // Relative offset to the sub-menu (or pointer)
+    DWORD_PTR dwBitmapListOffset; // Relative offset to the sub-menu (or pointer)
     DWORD_PTR dwEndOffset;     // Offset to the bottom of this data (or pointer)
 } IMEMENUINFO, *PIMEMENUINFO;
 
@@ -217,7 +217,7 @@ Imm32SerializeBitmap(
     HDC hDC;
 
     // Check bitmap caches
-    pNode = (PBITMAPNODE)pView->dwSubMenuOffset;
+    pNode = (PBITMAPNODE)pView->dwBitmapListOffset;
     while (pNode)
     {
         if (pNode->hbmpCached == hbmp)
@@ -237,7 +237,7 @@ Imm32SerializeBitmap(
     if (!hDC)
         return NULL;
 
-    pListHead = (PBITMAPNODE)pView->dwSubMenuOffset;
+    pListHead = (PBITMAPNODE)pView->dwBitmapListOffset;
     pNode->dwNext = (ULONG_PTR)pListHead;
 
     pNewEnd = Imm32WriteHBitmapToNode(hDC, hbmp, pNode, pView);
@@ -247,13 +247,13 @@ Imm32SerializeBitmap(
     if (!pNewEnd) // Failure
     {
         pView->dwEndOffset = (ULONG_PTR)pNode;
-        pView->dwSubMenuOffset = pNode->dwNext;
+        pView->dwBitmapListOffset = pNode->dwNext;
         return NULL;
     }
 
     pNode->hbmpCached = hbmp;
     pNode->dwNext = (ULONG_PTR)pListHead;
-    pView->dwSubMenuOffset = (DWORD)pNode;
+    pView->dwBitmapListOffset = (DWORD)pNode;
     pView->dwEndOffset     = (ULONG_PTR)pNewEnd;
 
     return pNode;
@@ -363,7 +363,7 @@ BOOL Imm32SerializeImeMenu(HIMC hIMC, PIMEMENUINFO pView)
         goto ConvertBack;
     }
 
-    pView->dwSubMenuOffset = 0;
+    pView->dwBitmapListOffset = 0;
     pView->dwEndOffset = (ULONG_PTR)((PBYTE)pView + (dwCount + 1) * sizeof(IMEMENUITEMINFOW));
 
     // Serialize items
@@ -437,11 +437,11 @@ ConvertBack:
         }
     }
 
-    // Convert dwSubMenuOffset to relative
-    if (pView->dwSubMenuOffset)
+    // Convert dwBitmapListOffset to relative
+    if (pView->dwBitmapListOffset)
     {
-        PBITMAPNODE pCur = (PBITMAPNODE)pView->dwSubMenuOffset;
-        pView->dwSubMenuOffset = (ULONG_PTR)pCur - (ULONG_PTR)pView;
+        PBITMAPNODE pCur = (PBITMAPNODE)pView->dwBitmapListOffset;
+        pView->dwBitmapListOffset = (ULONG_PTR)pCur - (ULONG_PTR)pView;
 
         while (pCur)
         {
@@ -482,10 +482,10 @@ Imm32DeserializeImeMenu(
     if (dwCount == 0)
         return 0;
 
-    if (pView->dwSubMenuOffset)
+    if (pView->dwBitmapListOffset)
     {
-        PBITMAPNODE pCur = (PBITMAPNODE)(pViewBase + pView->dwSubMenuOffset);
-        pView->dwSubMenuOffset = (ULONG_PTR)pCur;
+        PBITMAPNODE pCur = (PBITMAPNODE)(pViewBase + pView->dwBitmapListOffset);
+        pView->dwBitmapListOffset = (ULONG_PTR)pCur;
 
         while (pCur)
         {
