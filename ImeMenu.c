@@ -467,7 +467,8 @@ GetImeMenuItems(
         assert(0);
         return 0;
     }
-    DWORD dwItemCount = SerializeImeMenu(pb, IMEMENUINFO_BUFFER_SIZE,
+    DWORD dwItemCount = SerializeImeMenu((PIMEMENUINFO)pb,
+                                         IMEMENUINFO_BUFFER_SIZE,
                                          hIMC,
                                          dwFlags,
                                          dwType,
@@ -478,7 +479,7 @@ GetImeMenuItems(
         assert(0);
         return 0;
     }
-    DWORD ret = DeserializeImeMenu(pb, pImeMenuItems, dwSize);
+    DWORD ret = DeserializeImeMenu((PIMEMENUINFO)pb, pImeMenuItems, dwSize);
     Free(pb);
     return ret;
 #else
